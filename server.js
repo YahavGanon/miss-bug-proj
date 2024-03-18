@@ -1,7 +1,11 @@
 import express from 'express'
 import { bugService } from './services/bug.service.js'
+import { loggerService } from './services/logger.service.js'
 
 const app = express()
+
+app.use(express.static('public'))
+
 // Get Bugs(Read)
 app.get('/api/bug', (req, res) => {
     bugService.query().then(bugs => {
@@ -14,7 +18,8 @@ app.get('/api/bug/save', (req, res) => {
     const bugToSave = {
         title: req.query.title,
         severity: +req.query.severity,
-        _id: req.query._id
+        _id: req.query._id,
+        desc: req.query.desc,
     }
     bugService.save(bugToSave)
         .then(bug => res.send(bug))
@@ -25,7 +30,13 @@ app.get('/api/bug/save', (req, res) => {
 // Get Bug (Read)
 app.get('/api/bug/:id', (req, res) => {
     const bugId = req.params.id
-    bugService.getById(bugId).then(bug => res.send(bug))
+    bugService.getById(bugId)
+    .then(bug =>{
+        res.send(bug)
+    })
+    .catch(err => {
+        loggerService.error(err)
+    })
 })
 
 // Remove Bug (Delete)
@@ -35,4 +46,4 @@ app.get('/api/bug/:id/remove', (req, res) => {
 })
 
 
-app.listen(3031, () => console.log(`Server ready at port 3031 http://127.0.0.1:${3031}/`))
+app.listen(3031, () => loggerService.info(`Server ready at port 3031 http://127.0.0.1:${3031}/`))
