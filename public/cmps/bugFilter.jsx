@@ -4,7 +4,6 @@ import { utilService } from "../services/util.service.js"
 
 export function BugFilter({ debounceSetMainFilter, filterByMain }) {
     const [filterBy, setFilterBy] = useState(filterByMain)
-    console.log(debounceSetMainFilter)
     
     useEffect(() => {
         debounceSetMainFilter.current(filterBy)

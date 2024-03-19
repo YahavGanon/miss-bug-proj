@@ -20,7 +20,6 @@ app.get('/api/bug', (req, res) => {
     const filterBy = {
         title: req.query.title || ''
     }
-    console.log('$$$$$$$$$$$',filterBy)
 
     bugService.query(filterBy).then(bugs => {
         res.send(bugs)

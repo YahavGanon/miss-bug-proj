@@ -2,6 +2,7 @@ import { bugService } from '../services/bug.service.js'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { BugList } from '../cmps/BugList.jsx'
 import { BugFilter } from '../cmps/bugFilter.jsx'
+import { BugSort } from '../cmps/BugSort.jsx'
 import { utilService } from '../services/util.service.js'
 
 
@@ -10,7 +11,7 @@ const { useState, useEffect, useRef } = React
 export function BugIndex() {
     const [bugs, setBugs] = useState(null)
     const [filterByMain, setMainFilter] = useState(bugService.getDefaultFilter())
-    const debounceSetMainFilter = useRef(utilService.debounce(setMainFilter, 1000))
+    const debounceSetMainFilter = useRef(utilService.debounce(setMainFilter, 500))
 
     useEffect(() => {
         loadBugs()
@@ -21,6 +22,21 @@ export function BugIndex() {
             .then((bugs) => {
                 setBugs(bugs)
             })
+    }
+
+    function onChangePage(diff) {
+        if(filterByMain.pageIdx === undefined) return
+        let nextPageIdx = filterByMain.pageIdx + diff
+        if(nextPageIdx < 0) nextPageIdx = 0
+        setMainFilter(prevFilter => ({...prevFilter, pageIdx: nextPageIdx}))
+
+    }
+
+    function onTogglePagination(){
+        setMainFilter(prevFilter => ({
+            ...prevFilter,
+            pageIdx: filterByMain.pageIdx === undefined ? 0 : undefined
+        }))
     }
 
     function onRemoveBug(bugId) {
@@ -59,7 +75,7 @@ export function BugIndex() {
 
     function onEditBug(bug) {
         const severity = +prompt('New severity?')
-        const bugToSave = { ...bug, severity}
+        const bugToSave = { ...bug, severity }
         bugService
             .save(bugToSave)
             .then((savedBug) => {
@@ -79,7 +95,14 @@ export function BugIndex() {
     return (
         <main>
             <h3>Bugs App</h3>
+            <section className='pagination'>
+                <button onClick={() => onChangePage(-1)}>-</button>
+                <span>{filterByMain.pageIdx +1 || 'No pagination'}</span>
+                <button onClick={() => onChangePage(1)}>+</button>
+                <button onClick={onTogglePagination}>Toggle Pagination</button>
+            </section>
             <BugFilter filterByMain={filterByMain} debounceSetMainFilter={debounceSetMainFilter} />
+            <BugSort bugs={bugs} loadBugs={loadBugs} setBugs={setBugs} />
             <main>
                 <button onClick={onAddBug}>Add Bug ⛐</button>
                 <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} />
