@@ -17,8 +17,10 @@ app.use(express.json())
 
 // Get Bugs(Read)
 app.get('/api/bug', (req, res) => {
+    console.log('req query', req.query)
     const filterBy = {
-        title: req.query.title || ''
+        title: req.query.title || '',
+        pageIdx: req.query.pageIdx
     }
 
     bugService.query(filterBy).then(bugs => {

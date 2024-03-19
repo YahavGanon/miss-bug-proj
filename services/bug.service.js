@@ -2,6 +2,7 @@ import { utilService } from "./util.service.js"
 import fs from 'fs'
 
 const bugs = utilService.readJsonFile('data/bug.json')
+const PAGE_SIZE = 3
 
 export const bugService = {
     query,
@@ -16,6 +17,12 @@ function query(filterBy) {
     if (filterBy.title) {
         const regex = new RegExp(filterBy.title, 'i')
         bugsToReturn = bugsToReturn.filter(bug => regex.test(bug.title))
+    }
+
+    if (filterBy.pageIdx !== undefined) {
+        const pageIdx = +filterBy.pageIdx
+        const startIdx = pageIdx * PAGE_SIZE
+        bugsToReturn = bugsToReturn.slice(startIdx, startIdx + PAGE_SIZE)
     }
 
     return Promise.resolve(bugsToReturn)
