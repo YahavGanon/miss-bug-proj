@@ -10,8 +10,15 @@ export const bugService = {
     save,
 }
 
-function query() {
-    return Promise.resolve(bugs)
+function query(filterBy) {
+    let bugsToReturn = bugs
+
+    if (filterBy.title) {
+        const regex = new RegExp(filterBy.title, 'i')
+        bugsToReturn = bugsToReturn.filter(bug => regex.test(bug.title))
+    }
+
+    return Promise.resolve(bugsToReturn)
 }
 
 function getById(id) {

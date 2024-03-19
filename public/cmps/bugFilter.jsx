@@ -1,11 +1,13 @@
-const { useState, useEffect } = React
+const { useState, useEffect, useRef } = React
 import { bugService } from "../services/bug.service.js"
+import { utilService } from "../services/util.service.js"
 
-export function BugFilter({setMainFilter}) {
-    const [filterBy, setFilterBy] = useState(bugService.getDefaultFilter())
-
+export function BugFilter({ debounceSetMainFilter, filterByMain }) {
+    const [filterBy, setFilterBy] = useState(filterByMain)
+    console.log(debounceSetMainFilter)
+    
     useEffect(() => {
-        setMainFilter(filterBy)
+        debounceSetMainFilter.current(filterBy)
     }, [filterBy])
 
     function handleTxtChange(ev) {

@@ -2,12 +2,15 @@ import { bugService } from '../services/bug.service.js'
 import { showSuccessMsg, showErrorMsg } from '../services/event-bus.service.js'
 import { BugList } from '../cmps/BugList.jsx'
 import { BugFilter } from '../cmps/bugFilter.jsx'
+import { utilService } from '../services/util.service.js'
 
-const { useState, useEffect } = React
+
+const { useState, useEffect, useRef } = React
 
 export function BugIndex() {
     const [bugs, setBugs] = useState(null)
     const [filterByMain, setMainFilter] = useState(bugService.getDefaultFilter())
+    const debounceSetMainFilter = useRef(utilService.debounce(setMainFilter, 1000))
 
     useEffect(() => {
         loadBugs()
@@ -39,7 +42,7 @@ export function BugIndex() {
         const bug = {
             title: prompt('Bug title?'),
             severity: +prompt('Bug severity?'),
-            desc: +prompt('Bug description?'),
+            desc: prompt('Bug description?'),
         }
         bugService
             .save(bug)
@@ -56,8 +59,7 @@ export function BugIndex() {
 
     function onEditBug(bug) {
         const severity = +prompt('New severity?')
-        const desc = prompt('Enter some description about the bug')
-        const bugToSave = { ...bug, severity, desc }
+        const bugToSave = { ...bug, severity}
         bugService
             .save(bugToSave)
             .then((savedBug) => {
@@ -77,7 +79,7 @@ export function BugIndex() {
     return (
         <main>
             <h3>Bugs App</h3>
-            <BugFilter setMainFilter={setMainFilter} />
+            <BugFilter filterByMain={filterByMain} debounceSetMainFilter={debounceSetMainFilter} />
             <main>
                 <button onClick={onAddBug}>Add Bug ⛐</button>
                 <BugList bugs={bugs} onRemoveBug={onRemoveBug} onEditBug={onEditBug} />
