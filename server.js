@@ -1,10 +1,17 @@
 import express from 'express'
 import { bugService } from './services/bug.service.js'
 import { loggerService } from './services/logger.service.js'
-
+import cookieParser from 'cookie-parser'
 const app = express()
 
 app.use(express.static('public'))
+// app.use(cookieParser())
+
+// app.get('/api/bug', (req, res) => {
+//     let visitedCount = req.cookies.visitedCount || 0
+//     res.cookie('visitedCount', ++visitedCount)
+//     res.send(console.log('visitedCount', visitedCount))
+// })
 
 // Get Bugs(Read)
 app.get('/api/bug', (req, res) => {
@@ -31,12 +38,12 @@ app.get('/api/bug/save', (req, res) => {
 app.get('/api/bug/:id', (req, res) => {
     const bugId = req.params.id
     bugService.getById(bugId)
-    .then(bug =>{
-        res.send(bug)
-    })
-    .catch(err => {
-        loggerService.error(err)
-    })
+        .then(bug => {
+            res.send(bug)
+        })
+        .catch(err => {
+            loggerService.error(err)
+        })
 })
 
 // Remove Bug (Delete)

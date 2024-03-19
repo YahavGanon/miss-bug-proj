@@ -11,14 +11,19 @@ export const bugService = {
     getById,
     save,
     remove,
+    getDefaultFilter,
 }
 
 
-function query() {
+function query(filterBy = getDefaultFilter()) {
     // return storageService.query(STORAGE_KEY)
     return axios.get(BASE_URL)
     .then(res => res.data)
     .then(bugs => {
+        if (filterBy.title) {
+            const regex = new RegExp(filterBy.title, 'i')
+            bugs = bugs.filter(bug => regex.test(bug.title))
+        }
         return bugs
     })
 }
@@ -49,6 +54,11 @@ function save(bug) {
     }
     return axios.get(url + queryParams).then(res => res.data)
 }
+
+function getDefaultFilter() {
+    return { title: '' }
+}
+
 
 
 
