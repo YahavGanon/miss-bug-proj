@@ -29,7 +29,6 @@ export function BugIndex() {
         let nextPageIdx = filterByMain.pageIdx + diff
         if(nextPageIdx < 0) nextPageIdx = 0
         setMainFilter(prevFilter => ({...prevFilter, pageIdx: nextPageIdx}))
-
     }
 
     function onTogglePagination(){

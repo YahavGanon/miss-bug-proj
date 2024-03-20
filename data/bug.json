@@ -4,14 +4,22 @@
     "severity": 2,
     "desc": "dfsdfsd fsfs ",
     "_id": "sI9rL",
-    "createdAt": 1710873119027
+    "createdAt": 1710873119027,
+    "creator": {
+      "_id": "u101",
+      "fullname": "Puki Ja"
+    }
   },
   {
     "title": "yahav ",
     "severity": 2,
     "desc": "yahav ganosh",
     "_id": "Z7ynl",
-    "createdAt": 1710859621587
+    "createdAt": 1710859621587,
+    "creator": {
+      "_id": "u101",
+      "fullname": "Puki Ja"
+    }
   },
   {
     "_id": "abc123",
@@ -19,44 +27,16 @@
     "desc": "problem when clicking Save",
     "severity": 1,
     "createdAt": 1542107359454,
-    "labels": "['critical', 'undifiednd', 'dev-branch']"
+    "labels": "['critical', 'undifiednd', 'dev-branch']",
+    "creator": {
+      "_id": "u102",
+      "fullname": "Muki Ba"
+    }
   },
   {
-    "_id": "abc124",
     "title": "luki",
-    "desc": "problem when clicking Save",
-    "severity": 4,
-    "createdAt": 1542107359454,
-    "labels": "['critical', 'cant', 'dev-branch']"
-  },
-  {
-    "_id": "abc125",
-    "title": "shuki",
-    "desc": "problem when clicking Save",
-    "severity": 3,
-    "createdAt": 1542107359454,
-    "labels": "['critical', 'erase', 'dev-branch']"
-  },
-  {
-    "_id": "abc126",
-    "title": "baba",
-    "desc": "problem when clicking Save",
-    "severity": 2,
-    "createdAt": 1542107359454,
-    "labels": "['critical', 'hapyy', 'get']"
-  },
-  {
-    "_id": "abc127",
-    "title": "lala",
-    "desc": "problem when clicking Save",
-    "severity": 3,
-    "createdAt": 1542107359454,
-    "labels": "['critical', 'joke', 'dev-branch']"
-  },
-  {
-    "title": "meme",
-    "severity": 2,
-    "_id": "abc128",
+    "severity": 0,
+    "_id": "abc124",
     "desc": "problem when clicking Save"
   }
 ]

@@ -1,4 +1,5 @@
 import { utilService } from "./util.service.js"
+import { loggerService } from './logger.service.js'
 import fs from 'fs'
 
 const bugs = utilService.readJsonFile('data/bug.json')
@@ -47,6 +48,7 @@ function save(bug) {
         bugs[bugIdx] = bug
     } else {
         bug._id = utilService.makeId()
+        bug.owner = loggedinUser
         bug.createdAt = Date.now()
         bugs.unshift(bug)
     }

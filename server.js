@@ -1,13 +1,16 @@
+import path from 'path'
 import express from 'express'
+import cookieParser from 'cookie-parser'
+
 import { bugService } from './services/bug.service.js'
 import { loggerService } from './services/logger.service.js'
-import cookieParser from 'cookie-parser'
+import { userService } from './services/user.service.js'
+
 const app = express()
 
 app.use(express.static('public'))
 app.use(express.json())
-
-// app.use(cookieParser())
+app.use(cookieParser())
 
 // app.get('/api/bug', (req, res) => {
 //     let visitedCount = req.cookies.visitedCount || 0
@@ -56,8 +59,6 @@ app.put('/api/bug', (req, res) => {
         .then(bug => res.send(bug))
 })
 
-
-
 // Get Bug (Read)
 app.get('/api/bug/:id', (req, res) => {
     const bugId = req.params.id
@@ -76,5 +77,59 @@ app.delete('/api/bug/:id', (req, res) => {
     bugService.remove(bugId).then(() => res.send(bugId))
 })
 
-
 app.listen(3031, () => loggerService.info(`Server ready at port 3031 http://127.0.0.1:${3031}/`))
+
+// AUTH API
+app.get('/api/user', (req, res) => {
+    userService.query()
+        .then((users) => {
+            res.send(users)
+        })
+        .catch((err) => {
+            console.log('Cannot load users', err)
+            res.status(400).send('Cannot load users')
+        })
+})
+
+app.post('/api/auth/login', (req, res) => {
+    const credentials = req.body
+    userService.checkLogin(credentials)
+        .then(user => {
+            if (user) {
+                const loginToken = userService.getLoginToken(user)
+                res.cookie('loginToken', loginToken)
+                res.send(user)
+            } else {
+                res.status(401).send('Invalid Credentials')
+            }
+        })
+})
+
+app.post('/api/auth/signup', (req, res) => {
+    
+    const credentials = {
+        username: req.body.username,
+        password: req.body.password,
+        fullname: req.body.fullname
+    }
+    
+    userService.save(credentials)
+        .then(user => {
+            if (user) {
+                const loginToken = userService.getLoginToken(user)
+                res.cookie('loginToken', loginToken)
+                res.send(user)
+            } else {
+                res.status(400).send('Cannot signup')
+            }
+        })
+})
+
+app.post('/api/auth/logout', (req, res) => {
+    res.clearCookie('loginToken')
+    res.send('logged-out!')
+})
+
+app.get('/**', (req, res) => {
+    res.sendFile(path.resolve('public/index.html'))
+})
