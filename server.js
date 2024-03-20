@@ -29,22 +29,28 @@ app.get('/api/bug', (req, res) => {
     bugService.query(filterBy).then(bugs => {
         res.send(bugs)
     })
-    .catch(err => {
-        loggerService.error('Cannot get bugs', err)
-        res.status(400).send('Cannot get cars')
-    })
+        .catch(err => {
+            loggerService.error('Cannot get bugs', err)
+            res.status(400).send('Cannot get cars')
+        })
 })
 
 // Create Bug (Read)
 app.post('/api/bug', (req, res) => {
-    console.log(req.body)
+    const loggedinUser = userService.validateToken(req.cookies.loginToken)
+    if (!loggedinUser) return res.status(401).send('Cannot add bug')
+
     const bugToSave = {
         title: req.body.title,
         severity: +req.body.severity,
         desc: req.body.desc
     }
-    bugService.save(bugToSave)
+    bugService.save(bugToSave, loggedinUser)
         .then(bug => res.send(bug))
+        .catch((err) => {
+            loggerService.error('Cannot save car', err)
+            res.status(400).send('Cannot save car')
+        })
 })
 
 // Update Bug
@@ -73,8 +79,12 @@ app.get('/api/bug/:id', (req, res) => {
 
 // Remove Bug (Delete)
 app.delete('/api/bug/:id', (req, res) => {
+    const loggedinUser = userService.validateToken(req.cookies.loginToken)
+    if (!loggedinUser) return res.status(401).send('Cannot remove bug')
+
     const bugId = req.params.id
-    bugService.remove(bugId).then(() => res.send(bugId))
+    console.log(bugId)
+    bugService.remove(bugId, loggedinUser).then(() => res.send(bugId))
 })
 
 app.listen(3031, () => loggerService.info(`Server ready at port 3031 http://127.0.0.1:${3031}/`))
@@ -106,13 +116,13 @@ app.post('/api/auth/login', (req, res) => {
 })
 
 app.post('/api/auth/signup', (req, res) => {
-    
+
     const credentials = {
         username: req.body.username,
         password: req.body.password,
         fullname: req.body.fullname
     }
-    
+
     userService.save(credentials)
         .then(user => {
             if (user) {

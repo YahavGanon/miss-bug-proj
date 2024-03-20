@@ -35,16 +35,29 @@ function getById(id) {
     return Promise.resolve(bug)
 }
 
-function remove(id) {
+function remove(id, loggedinUser) {
     const bugIdx = bugs.findIndex(bug => bug._id === id)
+    const bug = bugs[bugIdx]
+
+    if (!loggedinUser.isAdmin &&
+        bug.owner._id !== loggedinUser._id) {
+        return Promise.reject('Not your bug')
+    }
+
     bugs.splice(bugIdx, 1)
     return _saveBugsToFile()
 
 }
 
-function save(bug) {
+function save(bug, loggedinUser) {
     if (bug._id) {
         const bugIdx = bugs.findIndex(_bug => _bug._id === bug._id)
+
+        if (!loggedinUser.isAdmin &&
+            bugIdx.owner._id !== loggedinUser._id) {
+            return Promise.reject('Not your car')
+        }
+
         bugs[bugIdx] = bug
     } else {
         bug._id = utilService.makeId()
